@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1280px; height: 720px; zoom: 2;
+    background:
+      radial-gradient(900px 420px at 88% -12%, rgba(34,211,238,0.14), transparent 60%),
+      radial-gradient(700px 380px at -6% 112%, rgba(59,130,246,0.10), transparent 60%),
+      #0B1220;
+    color: #E6EDF7;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    position: relative; overflow: hidden;
+  }
+  .frame { position: absolute; inset: 26px; border: 1px solid #24354F; border-radius: 18px; }
+  .glow { position: absolute; width: 340px; height: 340px; border-radius: 50%; filter: blur(90px); opacity: .35; }
+  .g1 { background: #22D3EE; top: -140px; right: -80px; }
+  .g2 { background: #3B82F6; bottom: -160px; left: -100px; opacity: .22; }
+
+  .wrap { position: absolute; inset: 0; padding: 74px 84px; display: flex; flex-direction: column; }
+  .kicker { display: flex; align-items: center; gap: 14px; }
+  .logo { width: 58px; height: 58px; }
+  .kicker-txt { font-size: 22px; letter-spacing: 4px; color: #93A5C0; }
+  .kicker-txt b { color: #E6EDF7; }
+
+  h1 { margin-top: 40px; font-size: 64px; line-height: 1.28; letter-spacing: 1px; }
+  h1 .hl { color: #22D3EE; }
+  .sub { margin-top: 22px; font-size: 24px; color: #93A5C0; line-height: 1.7; }
+  .sub b { color: #E6EDF7; font-weight: 600; }
+
+  .pills { margin-top: 46px; display: flex; gap: 14px; }
+  .pill {
+    border: 1px solid #2C4260; background: rgba(19,31,54,.75); border-radius: 99px;
+    padding: 10px 22px; font-size: 20px; color: #C7D5EA;
+  }
+  .pill em { font-style: normal; color: #22D3EE; margin-right: 8px; }
+
+  .foot {
+    margin-top: auto; display: flex; justify-content: space-between; align-items: flex-end;
+    font-size: 17px; color: #56688A; letter-spacing: 1px;
+  }
+  .foot .brand { color: #93A5C0; }
+  .check { position: fixed; left: 0; top: 0; }
+</style>
+</head>
+<body>
+  <div class="glow g1"></div>
+  <div class="glow g2"></div>
+  <div class="frame"></div>
+  <div class="wrap">
+    <div class="kicker">
+      <img class="logo" src="logo.svg" alt="">
+      <div class="kicker-txt"><b>PromptVault</b> · PROMPT ASSET VAULT</div>
+    </div>
+    <h1>用一次调好的提示词，<br>不再从零开始<span class="hl">第二次</span></h1>
+    <p class="sub">分类收纳 · 变量运行 · 版本留档 · 链接分享<br>你的提示词，是<b>越用越值钱的资产</b>，不是聊天记录里的尘埃</p>
+    <div class="pills">
+      <span class="pill"><em>01</em>纯前端 · 数据不出浏览器</span>
+      <span class="pill"><em>02</em>{{变量}} 填空即成品</span>
+      <span class="pill"><em>03</em>每次修改自动留版本</span>
+    </div>
+    <div class="foot">
+      <span class="brand">PromptVault · 提示词资产库</span>
+      <span>juejin.cn/vibe-work · 1024 新饭碗计划参赛作品</span>
+    </div>
+  </div>
+  <script>
+    window.addEventListener('load', function () {
+      var over = 0;
+      document.querySelectorAll('body *').forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.width && r.height && (r.right > document.body.offsetWidth + 1 || r.bottom > document.body.offsetHeight + 1 || r.left < -1 || r.top < -1)) over++;
+      });
+      document.title = 'OVERFLOW=' + over;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101A2E"/>
+      <stop offset="1" stop-color="#0B1220"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 底板 -->
+  <rect x="8" y="8" width="224" height="224" rx="52" fill="url(#bg)" stroke="#24354F" stroke-width="4"/>
+
+  <!-- 金库拱门 -->
+  <path d="M60 176 v-52 a60 60 0 0 1 120 0 v52" fill="none" stroke="#22D3EE" stroke-width="14" stroke-linecap="round"/>
+  <!-- 金库门盘 -->
+  <circle cx="120" cy="128" r="30" fill="none" stroke="#E6EDF7" stroke-width="10"/>
+  <circle cx="120" cy="128" r="8" fill="#22D3EE"/>
+  <!-- 辐条 -->
+  <g stroke="#E6EDF7" stroke-width="8" stroke-linecap="round">
+    <line x1="120" y1="128" x2="120" y2="104"/>
+    <line x1="120" y1="128" x2="141" y2="140"/>
+    <line x1="120" y1="128" x2="99" y2="140"/>
+  </g>
+
+  <!-- 存入的提示词行 -->
+  <g stroke="url(#bar)" stroke-width="12" stroke-linecap="round">
+    <line x1="84" y1="52" x2="156" y2="52"/>
+    <line x1="96" y1="72" x2="144" y2="72"/>
+  </g>
+
+  <!-- 复利箭头 -->
+  <path d="M186 96 l16 10 -17 8" fill="none" stroke="#22D3EE" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

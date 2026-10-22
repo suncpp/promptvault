@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptVault · 提示词资产库</title>
+<meta name="description" content="把每一次调教好的提示词，变成可复用的资产。分类、标签、变量、版本、分享——纯前端零依赖，数据不出浏览器。">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== 顶栏 ===== -->
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/logo.svg" alt="" class="brand-logo">
+    <div class="brand-text">
+      <h1>PromptVault <span class="brand-sub">· 提示词资产库</span></h1>
+      <p class="brand-slogan">用一次调好的提示词，不再从零开始第二次</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5Zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14Z"/></svg>
+      <input id="searchInput" type="search" placeholder="搜索标题 / 正文 / 标签…" autocomplete="off">
+    </div>
+    <button class="btn ghost" id="btnTools" title="导入 / 导出 / 清空">⋯</button>
+    <button class="btn primary" id="btnAdd">＋ 新建提示词</button>
+  </div>
+</header>
+
+<!-- ===== 主体 ===== -->
+<main class="layout">
+  <!-- 侧栏 -->
+  <aside class="sidebar">
+    <section class="side-block">
+      <h3>分类</h3>
+      <ul id="categoryList" class="side-list"></ul>
+    </section>
+    <section class="side-block">
+      <h3>标签</h3>
+      <div id="tagCloud" class="tag-cloud"></div>
+    </section>
+    <section class="side-block">
+      <h3>资产概览</h3>
+      <div id="stats" class="stats"></div>
+    </section>
+    <p class="side-foot">数据保存在本机浏览器（localStorage）<br>不上传 · 不联网 · 导出即备份</p>
+  </aside>
+
+  <!-- 卡片区 -->
+  <section class="content">
+    <div id="emptyState" class="empty" hidden>
+      <p class="empty-title">这里还没有资产</p>
+      <p class="empty-sub">把你最近一次用得顺手的提示词存进来，它就是你的第一笔资产。</p>
+      <button class="btn primary" id="btnAddEmpty">＋ 新建提示词</button>
+    </div>
+    <div id="cardGrid" class="card-grid"></div>
+  </section>
+</main>
+
+<!-- ===== 编辑弹窗 ===== -->
+<dialog id="editorModal" class="modal">
+  <form id="editorForm" method="dialog">
+    <h2 id="editorTitle">新建提示词</h2>
+    <div class="form-row two">
+      <label>名称<input id="fName" type="text" maxlength="60" placeholder="例：月报初稿生成器" required></label>
+      <label>分类<input id="fCategory" type="text" maxlength="20" list="categorySuggestions" placeholder="例：写作 / 编程 / 办公" required>
+        <datalist id="categorySuggestions"></datalist>
+      </label>
+    </div>
+    <label>标签<span class="hint">空格分隔，最多 5 个</span>
+      <input id="fTags" type="text" placeholder="例：周报 汇报 工作总结">
+    </label>
+    <label>提示词正文<span class="hint">变量用双花括号占位，例：<code>{{目标读者}}</code>，运行时可填</span>
+      <textarea id="fBody" rows="9" placeholder="你是…（角色设定）&#10;请根据以下信息…（任务说明）&#10;输出要求：…（格式约束）" required></textarea>
+    </label>
+    <div id="varPreview" class="var-preview" hidden></div>
+    <div class="modal-foot">
+      <button type="button" class="btn ghost" id="btnEditorCancel">取消</button>
+      <button type="submit" class="btn primary" id="btnEditorSave">保存为资产</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ===== 运行弹窗（变量填充） ===== -->
+<dialog id="runnerModal" class="modal">
+  <h2 id="runnerTitle">运行提示词</h2>
+  <p class="hint" id="runnerHint"></p>
+  <div id="runnerFields" class="runner-fields"></div>
+  <div class="runner-output">
+    <div class="runner-output-head">
+      <span>成品预览</span>
+      <button class="btn small" id="btnCopyFinal">复制成品</button>
+    </div>
+    <pre id="runnerOutput"></pre>
+  </div>
+  <div class="modal-foot">
+    <button type="button" class="btn ghost" id="btnRunnerClose">关闭</button>
+    <button type="button" class="btn primary" id="btnCopyRaw">复制原始提示词</button>
+  </div>
+</dialog>
+
+<!-- ===== 版本历史弹窗 ===== -->
+<dialog id="historyModal" class="modal">
+  <h2 id="historyTitle">版本历史</h2>
+  <p class="hint">每次保存都会留档，可随时回滚。</p>
+  <div id="historyList" class="history-list"></div>
+  <div class="modal-foot">
+    <button type="button" class="btn ghost" id="btnHistoryClose">关闭</button>
+  </div>
+</dialog>
+
+<!-- ===== 导入导出弹窗 ===== -->
+<dialog id="toolsModal" class="modal">
+  <h2>备份与迁移</h2>
+  <p class="hint">数据全部在本机。换电脑、换浏览器前，先导出一份 JSON。</p>
+  <div class="tools-grid">
+    <button class="btn" id="btnExport">⬇ 导出全部资产（JSON）</button>
+    <button class="btn" id="btnImport">⬆ 导入备份（JSON）</button>
+    <button class="btn" id="btnDemo">✦ 载入 8 条示例提示词</button>
+    <button class="btn danger" id="btnWipe">✕ 清空全部数据</button>
+  </div>
+  <div class="modal-foot">
+    <button type="button" class="btn ghost" id="btnToolsClose">关闭</button>
+  </div>
+</dialog>
+
+<!-- ===== 分享接收弹窗 ===== -->
+<dialog id="receiveModal" class="modal">
+  <h2>收到一条分享的提示词</h2>
+  <div id="receivePreview" class="receive-preview"></div>
+  <div class="modal-foot">
+    <button type="button" class="btn ghost" id="btnReceiveSkip">不要</button>
+    <button type="button" class="btn primary" id="btnReceiveSave">存入我的资产库</button>
+  </div>
+</dialog>
+
+<footer class="pagefoot">
+  <span>PromptVault · 提示词资产库</span>
+  <span>纯前端 · 数据不出浏览器 · <a href="https://github.com/suncpp/promptvault" target="_blank" rel="noopener">GitHub 开源</a></span>
+</footer>
+
+<div id="toast" class="toast" hidden></div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+
+<script src="app.js"></script>
+</body>
+</html>
